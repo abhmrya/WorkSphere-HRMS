@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth import login,logout
 from django.contrib.auth.decorators import login_required
 # Create your views here.
-@login_required
+
+# @login_required
 def home(request):
     return render(request,'accounts/home.html')

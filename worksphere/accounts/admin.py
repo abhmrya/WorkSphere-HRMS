@@ -6,24 +6,28 @@ from .models import User
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
 
+    ordering = ("id",)
+
     list_display = (
         "id",
-        "username",
-        "email",
+        "first_name",
+        "last_name",
         "phone",
+        "email",
+        "role",
         "is_staff",
         "is_active",
     )
 
-    ordering = ("id",)
-
     search_fields = (
-        "username",
-        "email",
+        "first_name",
+        "last_name",
         "phone",
+        "email",
     )
 
     list_filter = (
+        "role",
         "is_staff",
         "is_active",
     )
@@ -39,11 +43,20 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
         (
-            "Personal Info",
+            "Personal Information",
             {
                 "fields": (
-                    "username",
+                    "first_name",
+                    "last_name",
                     "email",
+                )
+            },
+        ),
+        (
+            "Role",
+            {
+                "fields": (
+                    "role",
                 )
             },
         ),
@@ -59,6 +72,14 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
+        (
+            "Important Dates",
+            {
+                "fields": (
+                    "last_login",
+                )
+            },
+        ),
     )
 
     add_fieldsets = (
@@ -68,8 +89,10 @@ class CustomUserAdmin(UserAdmin):
                 "classes": ("wide",),
                 "fields": (
                     "phone",
-                    "username",
                     "email",
+                    "first_name",
+                    "last_name",
+                    "role",
                     "password1",
                     "password2",
                     "is_staff",
@@ -77,4 +100,9 @@ class CustomUserAdmin(UserAdmin):
                 ),
             },
         ),
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
     )
