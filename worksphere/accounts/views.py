@@ -115,7 +115,7 @@ class MeAPIView(APIView):
         return Response(
             {
                 "message": "User fetched successfully.",
-                "data": serializer.data,
+                "user": serializer.data,
             },
             status=status.HTTP_200_OK,
         )
