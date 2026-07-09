@@ -2,12 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAdminUser,IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
 
-from .serializers import RegisterSerializer,LoginSerializer,UserSerializer
+from .serializers import (RegisterSerializer,LoginSerializer,UserSerializer,
+                          LogoutSerializer,)
 
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -84,4 +85,37 @@ class LoginAPIView(APIView):
                 
             },
             status=status.HTTP_200_OK
+        )
+    
+class LogoutAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = LogoutSerializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {
+                "message": "Successfully logged out."
+            },
+            status=status.HTTP_200_OK,
+        )
+    
+class MeAPIView(APIView):
+   
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+
+        serializer = UserSerializer(request.user)
+
+        return Response(
+            {
+                "message": "User fetched successfully.",
+                "data": serializer.data,
+            },
+            status=status.HTTP_200_OK,
         )

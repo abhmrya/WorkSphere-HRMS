@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from .models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class RegisterSerializer(serializers.ModelSerializer):
 
@@ -97,3 +99,19 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
             # 'password'
         )
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']   #yaha istance difine kiya kyu ki save() me use kar paye
+        return attrs
+    
+    def save(self,**kwargs):
+
+        try:
+            RefreshToken(self.token).blacklist()
+        except Exception:
+            raise serializers.ValidationError(
+                "Invalid or expired refresh token."
+            )
