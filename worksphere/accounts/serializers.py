@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from django.contrib.auth import authenticate
 from .models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -63,3 +63,37 @@ class RegisterSerializer(serializers.ModelSerializer):
     #     user.save()
 
     #     return user
+
+
+class LoginSerializer(serializers.Serializer):
+
+        phone = serializers.CharField()
+        password = serializers.CharField(write_only = True)
+
+        def validate(self, attrs):
+            phone = attrs.get("phone")
+            password = attrs.get("password")
+
+            user = authenticate(username = phone,
+                                password = password)
+            print("user : ",user)
+            if user is None:
+                 raise serializers.ValidationError(
+                      "Invalid phone or password"
+                 )
+            attrs["user"] = user
+
+            return attrs;
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "role",
+            # 'password'
+        )
