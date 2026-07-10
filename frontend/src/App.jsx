@@ -3,25 +3,34 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardLayout from "./layouts/DashboardLayout";
+import Department from "./pages/Department";
 
 
 function App() {
   return (
     <Routes>
 
-        <Route path="/login" element={<Login />} />
+      {/* Public Routes */}
 
-        <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
 
-        <Route
-            path="/dashboard"
-            element={
-                <ProtectedRoute>
-                    <Dashboard />
-                </ProtectedRoute>
-            }
-          />
+      <Route path="/register" element={<Register />} />
+
+      {/* Protected Routes */}
+
+      <Route element={<ProtectedRoute />}>
+
+        <Route element={<DashboardLayout />}>
+
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/departments" element={<Department />} />
+
+        </Route>
+
+      </Route>
 
     </Routes>
   );
