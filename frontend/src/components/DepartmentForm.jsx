@@ -1,88 +1,92 @@
-import { useState } from "react";
+function DepartmentForm({
+  formData,
+  setFormData,
+  handleSubmit,
+  editingDepartment,
+}) {
 
-function DepartmentForm() {
+  return (
 
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-    });
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5"
+    >
 
-    const handleChange = (e) => {
+      <div>
 
-        setFormData({
+        <label className="mb-2 block font-medium">
+          Department Name
+        </label>
 
-            ...formData,
+        <input
+          type="text"
+          value={formData.name}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              name: e.target.value,
+            })
+          }
+          placeholder="Enter department name"
+          className="w-full rounded-lg border p-3 outline-none focus:border-blue-500"
+          required
+        />
 
-            [e.target.name]: e.target.value,
+      </div>
 
-        });
+      <div>
 
-    };
+        <label className="mb-2 block font-medium">
+          Department Code
+        </label>
 
-    const handleSubmit = (e) => {
+        <input
+          type="text"
+          value={formData.code}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              code: e.target.value.toUpperCase(),
+            })
+          }
+          placeholder="IT"
+          className="w-full rounded-lg border p-3 outline-none focus:border-blue-500"
+          required
+        />
 
-        e.preventDefault();
+      </div>
 
-        console.log(formData);
+      <div>
 
-    };
+        <label className="mb-2 block font-medium">
+          Description
+        </label>
 
-    return (
+        <textarea
+          rows="4"
+          value={formData.description}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              description: e.target.value,
+            })
+          }
+          placeholder="Department description..."
+          className="w-full rounded-lg border p-3 outline-none focus:border-blue-500"
+        />
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+      </div>
 
-            <div>
+      <button
+        type="submit"
+        className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white"
+        >
+        {editingDepartment ? "Update Department" : "Save Department"}
+        </button>
 
-                <label className="mb-2 block font-medium">
+    </form>
 
-                    Department Name
-
-                </label>
-
-                <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border p-3 outline-none focus:border-blue-500"
-                    placeholder="Enter department name"
-                />
-
-            </div>
-
-            <div>
-
-                <label className="mb-2 block font-medium">
-
-                    Description
-
-                </label>
-
-                <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows="4"
-                    className="w-full rounded-lg border p-3 outline-none focus:border-blue-500"
-                    placeholder="Enter description"
-                />
-
-            </div>
-
-            <div className="flex justify-end gap-3">
-
-                <button
-                    type="submit"
-                    className="rounded-lg bg-blue-600 px-5 py-2 text-white"
-                >
-                    Save
-                </button>
-
-            </div>
-
-        </form>
-
-    );
+  );
 
 }
 

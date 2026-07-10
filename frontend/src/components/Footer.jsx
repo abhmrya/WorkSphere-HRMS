@@ -1,15 +1,9 @@
 function Footer() {
-
-    return (
-
-        <footer className="h-12 bg-slate-800 text-white flex items-center justify-center">
-
-            © 2026 WorkSphere HRMS
-
-        </footer>
-
-    );
-
+  return (
+    <footer className="flex h-12 items-center justify-center bg-slate-800 px-4 text-center text-xs text-slate-300 sm:text-sm">
+      © 2026 WorkSphere HRMS
+    </footer>
+  );
 }
 
 export default Footer;
