@@ -54,118 +54,86 @@ function Login() {
   };
 
   return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-100 flex items-center justify-center p-4">
 
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl grid lg:grid-cols-2">
 
-      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden grid lg:grid-cols-2">
+        {/* LEFT PANEL */}
 
-        {/* LEFT SIDE */}
-
-        <div className="hidden lg:flex bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white p-14 flex-col justify-between">
+        <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-700 p-10 text-white">
 
           <div>
-
-            <h1 className="text-5xl font-black">
-
+            <h1 className="text-4xl font-black">
               WorkSphere
-
             </h1>
 
-            <p className="mt-2 text-blue-100 text-lg">
-
+            <p className="mt-2 text-blue-100">
               Human Resource Management System
-
             </p>
-
           </div>
 
           <div>
-
-            <h2 className="text-4xl font-bold leading-snug">
-
-              Manage your company
+            <h2 className="text-3xl font-bold leading-tight">
+              Manage your team
               <br />
-              with ease.
-
+              smarter & faster.
             </h2>
 
-            <p className="mt-6 text-blue-100 text-lg leading-8">
+            <div className="mt-8 space-y-3 text-blue-100">
 
-              Employee Management
+              <p>✓ Employee Management</p>
 
-              <br />
+              <p>✓ Department Management</p>
 
-              Department Management
+              <p>✓ Payroll System</p>
 
-              <br />
+              <p>✓ Leave Tracking</p>
 
-              Payroll Management
+              <p>✓ Attendance Monitoring</p>
 
-              <br />
-
-              Leave Management
-
-              <br />
-
-              Attendance Tracking
-
-            </p>
-
+            </div>
           </div>
 
-          <div className="flex gap-3">
-
-            <div className="w-3 h-3 rounded-full bg-white"></div>
-
-            <div className="w-3 h-3 rounded-full bg-blue-300"></div>
-
-            <div className="w-3 h-3 rounded-full bg-blue-300"></div>
-
+          <div className="flex gap-2">
+            <div className="h-3 w-3 rounded-full bg-white"></div>
+            <div className="h-3 w-3 rounded-full bg-blue-300"></div>
+            <div className="h-3 w-3 rounded-full bg-blue-300"></div>
           </div>
-
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT PANEL */}
 
-        <div className="flex items-center justify-center p-10 lg:p-16">
+        <div className="flex items-center justify-center p-8 lg:p-12">
 
           <div className="w-full max-w-md">
 
-            <h2 className="text-4xl font-bold text-slate-800">
-
+            <h2 className="text-3xl font-bold text-slate-800">
               Welcome Back 👋
-
             </h2>
 
-            <p className="mt-3 text-slate-500">
-
-              Login to continue using your HRMS dashboard.
-
+            <p className="mt-2 text-slate-500">
+              Sign in to access your dashboard.
             </p>
 
             {error && (
-
-              <div className="mt-6 rounded-lg bg-red-100 border border-red-300 text-red-700 px-4 py-3">
-
+              <div className="mt-5 rounded-xl border border-red-300 bg-red-100 px-4 py-3 text-red-700">
                 {error}
-
               </div>
-
             )}
 
             <form
               onSubmit={handleSubmit}
-              className="mt-8 space-y-6"
+              className="mt-8 space-y-5"
             >
-                          {/* Phone */}
+              {/* Phone */}
 
               <div>
 
-                <label className="mb-2 block font-semibold text-slate-700">
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Phone Number
                 </label>
 
-                <div className="flex items-center rounded-xl border border-slate-300 bg-slate-50 px-4 focus-within:border-blue-600">
+                <div className="flex items-center rounded-xl border border-slate-300 bg-slate-50 px-4 transition focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100">
 
                   <FaPhoneAlt className="text-slate-400" />
 
@@ -179,7 +147,7 @@ function Login() {
                         phone: e.target.value,
                       })
                     }
-                    className="w-full bg-transparent px-3 py-4 outline-none"
+                    className="w-full bg-transparent px-3 py-3 outline-none"
                     required
                   />
 
@@ -191,20 +159,16 @@ function Login() {
 
               <div>
 
-                <label className="mb-2 block font-semibold text-slate-700">
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Password
                 </label>
 
-                <div className="flex items-center rounded-xl border border-slate-300 bg-slate-50 px-4 focus-within:border-blue-600">
+                <div className="flex items-center rounded-xl border border-slate-300 bg-slate-50 px-4 transition focus-within:border-blue-600 focus-within:ring-2 focus-within:ring-blue-100">
 
                   <FaLock className="text-slate-400" />
 
                   <input
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
+                    type={showPassword ? "text" : "password"}
                     placeholder="Enter password"
                     value={formData.password}
                     onChange={(e) =>
@@ -213,33 +177,25 @@ function Login() {
                         password: e.target.value,
                       })
                     }
-                    className="w-full bg-transparent px-3 py-4 outline-none"
+                    className="w-full bg-transparent px-3 py-3 outline-none"
                     required
                   />
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword(!showPassword)
-                    }
-                    className="text-slate-500 hover:text-blue-600"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-slate-500 transition hover:text-blue-600"
                   >
-
-                    {showPassword ? (
-                      <FaEyeSlash />
-                    ) : (
-                      <FaEye />
-                    )}
-
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
 
                 </div>
 
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between text-sm">
 
-                <label className="flex items-center gap-2 text-sm text-slate-600">
+                <label className="flex items-center gap-2 text-slate-600">
 
                   <input
                     type="checkbox"
@@ -252,7 +208,7 @@ function Login() {
 
                 <button
                   type="button"
-                  className="text-sm font-semibold text-blue-600 hover:underline"
+                  className="font-medium text-blue-600 hover:underline"
                 >
                   Forgot Password?
                 </button>
@@ -262,25 +218,21 @@ function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
+                className="w-full rounded-xl bg-gradient-to-r from-blue-700 to-cyan-600 py-3 font-semibold text-white shadow-lg transition duration-300 hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
               >
-
-                {loading
-                  ? "Logging in..."
-                  : "Login"}
-
+                {loading ? "Signing In..." : "Login"}
               </button>
-                            <div className="text-center">
+              <div className="pt-2 text-center">
 
-                <p className="text-slate-600">
+                <p className="text-sm text-slate-600">
 
                   Don't have an account?{" "}
 
                   <Link
                     to="/register"
-                    className="font-semibold text-blue-600 hover:underline"
+                    className="font-semibold text-blue-600 transition hover:text-blue-700 hover:underline"
                   >
-                    Register Now
+                    Create Account
                   </Link>
 
                 </p>

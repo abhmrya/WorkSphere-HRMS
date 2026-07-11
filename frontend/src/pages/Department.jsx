@@ -38,6 +38,7 @@ function Department() {
   const [editingDepartment, setEditingDepartment] = useState(null);
   const [query, setQuery] = useState("");
   const [deletingId, setDeletingId] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     name: "",
@@ -73,6 +74,7 @@ function Department() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
 
     try {
       if (editingDepartment) {
@@ -88,10 +90,21 @@ function Department() {
       resetForm();
 
       await fetchDepartments();
-    } catch (error) {
-      console.log(error.response?.data);
-      toast.error("Something went wrong.");
+    }catch (error) {
+
+    console.log(error.response?.data);
+
+    if (error.response?.status === 400) {
+
+        setErrors(error.response.data);
+
+    } else {
+
+        toast.error("Something went wrong.");
+
     }
+
+}
   };
 
   const handleEdit = (department) => {
@@ -489,6 +502,7 @@ function Department() {
           setFormData={setFormData}
           handleSubmit={handleSubmit}
           editingDepartment={editingDepartment}
+          errors={errors}
         />
       </Modal>
     </div>
