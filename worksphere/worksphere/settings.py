@@ -74,7 +74,8 @@ INSTALLED_APPS = [
     # Local Apps
     "accounts",
     "departments",
-    "common",
+    "employees",
+    'designation',
     
 ]
 CORS_ALLOW_ALL_ORIGINS = True
@@ -177,6 +178,8 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ),
+
+     "DEFAULT_PAGINATION_CLASS": "core.pagination.DefaultPagination",
 }
 
 SIMPLE_JWT = {

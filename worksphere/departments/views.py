@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from core.permissions import IsAdminOrHR
 
 
 from .models import Department
@@ -12,4 +13,6 @@ class DepartmentViewSet(viewsets.ModelViewSet):
 
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
+    permission_classes = [IsAdminOrHR]
+
