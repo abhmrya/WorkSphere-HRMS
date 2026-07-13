@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,6 +15,7 @@ function App() {
     <>
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={<Navigate to="/login" />} />
 
         <Route path="/login" element={<Login />} />
 

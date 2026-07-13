@@ -17,6 +17,8 @@ const AVATAR_STYLES = [
   { bg: "bg-violet-50", text: "text-violet-700", ring: "ring-violet-100" },
 ];
 
+const EMPTY_FORM = { name: "", code: "", description: "" };
+
 function avatarStyleFor(seed = "") {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
@@ -40,22 +42,33 @@ function Department() {
   const [deletingId, setDeletingId] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const [formData, setFormData] = useState({
-    name: "",
-    code: "",
-    description: "",
+  const [formData, setFormData] = useState(EMPTY_FORM);
+
+  const [pagination, setPagination] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+    currentPage: 1,
   });
 
   useEffect(() => {
-    fetchDepartments();
+    fetchDepartments(1);
   }, []);
 
-  const fetchDepartments = async () => {
+  const fetchDepartments = async (page = 1) => {
     setLoading(true);
 
     try {
-      const response = await api.get("/departments/");
-      setDepartments(response.data);
+      const response = await api.get(`/departments/?page=${page}`);
+
+      setDepartments(response.data.results);
+
+      setPagination({
+        count: response.data.count,
+        next: response.data.next,
+        previous: response.data.previous,
+        currentPage: page,
+      });
     } catch (error) {
       console.log(error.response?.data);
       toast.error("Couldn't load departments.");
@@ -64,12 +77,11 @@ function Department() {
     }
   };
 
+  // Was missing before — every call site (handleSubmit, openAddModal,
+  // closeModal) relied on this function, which caused a ReferenceError.
   const resetForm = () => {
-    setFormData({
-      name: "",
-      code: "",
-      description: "",
-    });
+    setFormData(EMPTY_FORM);
+    setErrors({});
   };
 
   const handleSubmit = async (e) => {
@@ -89,22 +101,16 @@ function Department() {
       setEditingDepartment(null);
       resetForm();
 
-      await fetchDepartments();
-    }catch (error) {
+      await fetchDepartments(pagination.currentPage);
+    } catch (error) {
+      console.log(error.response?.data);
 
-    console.log(error.response?.data);
-
-    if (error.response?.status === 400) {
-
+      if (error.response?.status === 400) {
         setErrors(error.response.data);
-
-    } else {
-
+      } else {
         toast.error("Something went wrong.");
-
+      }
     }
-
-}
   };
 
   const handleEdit = (department) => {
@@ -131,7 +137,19 @@ function Department() {
     try {
       await api.delete(`/departments/${id}/`);
       toast.success("Department deleted successfully.");
-      await fetchDepartments();
+
+      // BUG FIX: previously this called fetchDepartments() with no
+      // argument, which silently reset the page back to 1 no matter
+      // which page you were on. Now we stay on the current page, and
+      // only step back a page if the deleted row was the last item
+      // on the current (non-first) page.
+      const isLastItemOnPage = departments.length === 1;
+      const targetPage =
+        isLastItemOnPage && pagination.currentPage > 1
+          ? pagination.currentPage - 1
+          : pagination.currentPage;
+
+      await fetchDepartments(targetPage);
     } catch (error) {
       console.log(error.response?.data);
       toast.error("Unable to delete department.");
@@ -140,6 +158,9 @@ function Department() {
     }
   };
 
+  // Note: this only searches within the currently loaded page of results.
+  // For search across all departments, the backend needs to support a
+  // `search` query param and this should call fetchDepartments with it.
   const filteredDepartments = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return departments;
@@ -492,6 +513,44 @@ function Department() {
         )}
       </div>
 
+      {pagination.count > 0 && (
+        <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-500">
+            Showing{" "}
+            <span className="font-semibold text-slate-700">
+              {departments.length}
+            </span>{" "}
+            of{" "}
+            <span className="font-semibold text-slate-700">
+              {pagination.count}
+            </span>{" "}
+            departments
+          </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              disabled={!pagination.previous}
+              onClick={() => fetchDepartments(pagination.currentPage - 1)}
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              ← Previous
+            </button>
+
+            <span className="rounded-lg bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-700">
+              Page {pagination.currentPage}
+            </span>
+
+            <button
+              disabled={!pagination.next}
+              onClick={() => fetchDepartments(pagination.currentPage + 1)}
+              className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
+
       <Modal
         isOpen={open}
         title={editingDepartment ? "Edit Department" : "Add Department"}
@@ -510,283 +569,3 @@ function Department() {
 }
 
 export default Department;
-
-
-
-
-
-// import { useEffect, useState } from "react";
-// import api from "../services/api";
-// import { toast } from "react-toastify";
-
-// import Modal from "../components/Modal";
-// import DepartmentForm from "../components/DepartmentForm";
-
-// function Department() {
-
-//     const [departments, setDepartments] = useState([]);
-//     const [loading, setLoading] = useState(true);
-//     const [open, setOpen] = useState(false);
-//     const [editingDepartment, setEditingDepartment] = useState(null);
-
-//     const [formData, setFormData] = useState({
-//         name: "",
-//         code: "",
-//         description: "",
-//     });
-
-//     useEffect(() => {
-//         fetchDepartments();
-//     }, []);
-
-//     const fetchDepartments = async () => {
-
-//         setLoading(true);
-
-//         try {
-
-//             const response = await api.get("/departments/");
-
-//             setDepartments(response.data);
-
-//         } catch (error) {
-
-//             console.log(error.response?.data);
-
-//         } finally {
-
-//             setLoading(false);
-
-//         }
-
-//     };
-
-//     const handleSubmit = async (e) => {
-
-//         e.preventDefault();
-
-//         try {
-
-//             if (editingDepartment) {
-
-//                 await api.patch(
-//                     `/departments/${editingDepartment.id}/`,
-//                     formData
-//                 );
-//                 toast.success("Department updated successfully.");
-
-//             } else {
-
-//                 await api.post(
-//                     "/departments/",
-//                     formData
-//                 );
-//                 toast.success("Department created successfully.");
-
-//             }
-
-//             setOpen(false);
-
-//             setEditingDepartment(null);
-
-//             setFormData({
-//                 name: "",
-//                 code: "",
-//                 description: "",
-//             });
-
-//             fetchDepartments();
-
-//         } catch (error) {
-
-//             console.log(error.response?.data);
-//             toast.error("Something went wrong.");
-
-//         }
-
-//     };
-
-//     const handleEdit = (department) => {
-
-//         setEditingDepartment(department);
-
-//         setFormData({
-//             name: department.name,
-//             code: department.code,
-//             description: department.description,
-//         });
-
-//         setOpen(true);
-
-//     };
-
-//     const handleDelete = async (id) => {
-
-//         const confirmDelete = window.confirm(
-//             "Are you sure you want to delete this department?"
-//         );
-
-//         if (!confirmDelete) return;
-
-//         try {
-
-//             await api.delete(`/departments/${id}/`);
-//             toast.success("Department deleted successfully.");
-//             fetchDepartments();
-
-//         } catch (error) {
-
-//             console.log(error.response?.data);
-//             toast.error("Unable to delete department.");
-
-//         }
-
-//     };
-
-//     return (
-
-//         <div>
-
-//             <div className="mb-6 flex items-center justify-between">
-
-//                 <h1 className="text-3xl font-bold">
-//                     Departments
-//                 </h1>
-
-//                 <button
-//                     onClick={() => {
-
-//                         setEditingDepartment(null);
-
-//                         setFormData({
-//                             name: "",
-//                             code: "",
-//                             description: "",
-//                         });
-
-//                         setOpen(true);
-
-//                     }}
-//                     className="rounded-lg bg-blue-600 px-5 py-2 text-white"
-//                 >
-//                     + Add Department
-//                 </button>
-
-//             </div>
-
-//             <div className="rounded-xl bg-white p-6 shadow">
-
-//                 <h2 className="mb-4 text-xl font-semibold">
-//                     Department List
-//                 </h2>
-
-//                 {loading ? (
-
-//                     <p>Loading...</p>
-
-//                 ) : departments.length === 0 ? (
-
-//                     <p className="text-slate-500">
-//                         No departments available.
-//                     </p>
-
-//                 ) : (
-
-//                     <table className="w-full">
-
-//                         <thead>
-
-//                             <tr className="border-b">
-
-//                                 <th className="p-3 text-left">Name</th>
-//                                 <th className="p-3 text-left">Code</th>
-//                                 <th className="p-3 text-left">Description</th>
-//                                 <th className="p-3 text-left">Actions</th>
-
-//                             </tr>
-
-//                         </thead>
-
-//                         <tbody>
-
-//                             {departments.map((department) => (
-
-//                                 <tr
-//                                     key={department.id}
-//                                     className="border-b"
-//                                 >
-
-//                                     <td className="p-3">
-//                                         {department.name}
-//                                     </td>
-
-//                                     <td className="p-3">
-//                                         {department.code}
-//                                     </td>
-
-//                                     <td className="p-3">
-//                                         {department.description}
-//                                     </td>
-
-//                                     <td className="p-3">
-
-//                                         <button
-//                                             onClick={() => handleEdit(department)}
-//                                             className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600"
-//                                         >
-//                                             Edit
-//                                         </button>
-
-//                                         <button
-//                                             onClick={() => handleDelete(department.id)}
-//                                             className="ml-2 rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700"
-//                                             >
-//                                             Delete
-//                                         </button>
-
-//                                     </td>
-
-//                                 </tr>
-
-//                             ))}
-
-//                         </tbody>
-
-//                     </table>
-
-//                 )}
-
-//             </div>
-
-//             <Modal
-//                 isOpen={open}
-//                 title={
-//                     editingDepartment
-//                         ? "Edit Department"
-//                         : "Add Department"
-//                 }
-//                 onClose={() => {
-
-//                     setOpen(false);
-
-//                     setEditingDepartment(null);
-
-//                 }}
-//             >
-
-//                 <DepartmentForm
-//                     formData={formData}
-//                     setFormData={setFormData}
-//                     handleSubmit={handleSubmit}
-//                     editingDepartment={editingDepartment}
-//                 />
-
-//             </Modal>
-
-//         </div>
-
-//     );
-
-// }
-
-// export default Department;
