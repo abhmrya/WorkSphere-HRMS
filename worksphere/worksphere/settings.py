@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "departments",
     "employees",
     'designation',
+    'dashboard',
     
 ]
 CORS_ALLOW_ALL_ORIGINS = True

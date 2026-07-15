@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Designation
 from .serializers import DesignationSerializer
-
+from core.permissions import IsAdminOrHR
 
 class DesignationViewSet(viewsets.ModelViewSet):
 
@@ -14,4 +14,4 @@ class DesignationViewSet(viewsets.ModelViewSet):
 
     serializer_class = DesignationSerializer
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrHR]

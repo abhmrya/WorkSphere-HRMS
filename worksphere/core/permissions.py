@@ -41,11 +41,17 @@ class IsEmployee(BasePermission):
 class IsAdminOrHR(BasePermission):
 
     def has_permission(self, request, view):
-        print(request.user)
-        print(request.user.is_authenticated)
-        print(request.user.role)
-
-
+        print("user : ",request.user)
+        print("autenticate : ",request.user.is_authenticated)
+        print("role : ",request.user.role)
+        print("email : ",request.user.email)
+        print("phone : ",request.user.phone)
+        print("first_name : ",request.user.first_name)
+        print("is_active : ",request.user.is_active)
+        print("is_staff : ",request.user.is_staff)
+        print("created_at : ",request.user.created_at)
+        print("updated_at : ",request.user.updated_at)
+        
         return (
             request.user.is_authenticated
             and request.user.role in ["ADMIN", "HR"]
